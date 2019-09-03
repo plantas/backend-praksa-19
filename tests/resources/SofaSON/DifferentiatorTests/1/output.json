@@ -1,0 +1,13 @@
+{
+  "dataSourceId": 1,
+  "feedType": "livescore",
+  "entities": [
+    {
+      "entity": "AppBundle\\\\Entity\\\\Team",
+      "selector": {
+        "externalId": 89937
+      },
+      "action": "delete"
+    }
+  ]
+}

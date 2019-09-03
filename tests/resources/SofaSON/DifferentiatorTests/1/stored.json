@@ -1,0 +1,31 @@
+{
+  "dataSourceId": 1,
+  "feedType": "livescore",
+  "entities": [
+    {
+      "entity": "AppBundle\\\\Entity\\\\Team",
+      "selector": {
+        "externalId": 89936
+      },
+      "propertyMap": {
+        "name": "NK Dugo Selo",
+        "gender": "M",
+        "sport": {
+          "entity": "AppBundle\\\\Entity\\\\Sport",
+          "selector": {
+            "name": "2",
+            "externalId": 1
+          }
+        },
+        "category": {
+          "entity": "AppBundle\\\\Entity\\\\Category",
+          "selector": {
+            "externalId": 1
+          }
+        },
+        "country": "Croatia"
+      },
+      "action": "upsert"
+    }
+  ]
+}
