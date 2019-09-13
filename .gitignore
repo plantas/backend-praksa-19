@@ -16,3 +16,47 @@
 /vendor/
 /web/bundles/
 /.idea
+
+# PHPUnit
+/app/phpunit.xml
+/phpunit.xml
+/coverage/
+
+# Managed by Composer
+/app/bootstrap.php.cache
+/var/bootstrap.php.cache
+/bin/*
+!bin/console
+!bin/symfony_requirements
+/vendor/
+
+# Composer PHAR
+/composer.phar
+
+# Build data
+/build/
+
+# Vagrant
+/.vagrant/
+/vagrant/playbook.retry
+
+# Web assets
+/app/Resources/minify
+/web/bundles/
+/web/dev/
+/web/js/
+/web/css/
+/web/tmp/
+/web/*.worker.js
+/web/*.worker.js.map
+
+# Other
+/.idea/
+/.scripts/
+/.vscode/
+/doc/*
+/ignored/
+.DS_Store
+.remote-sync.json
+yarn-error.log
+*.swp
