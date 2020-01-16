@@ -71,13 +71,6 @@ class UniqueTournament
      */
     protected $order = 0;
 
-//    /**
-//     * @ORM\OneToMany(targetEntity="SofaScore\ModelBundle\Entity\External\Event\Highlight", mappedBy="uniqueTournament",
-//     *                                                                                      cascade={"ALL"},
-//     *                                                                                      orphanRemoval=true)
-//     */
-//    protected $highlights;
-
     /**
      * Unique tournament primary color
      *

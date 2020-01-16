@@ -36,6 +36,7 @@
         "ext-json": "*",
         "phpunit/phpunit": "^8.2",
         "sensio/generator-bundle": "^3.0",
+        "symfony/maker-bundle": "^1.14",
         "symfony/phpunit-bridge": "^3.0"
     },
     "scripts": {

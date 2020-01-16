@@ -89,7 +89,6 @@ class SofaSON implements \JsonSerializable
         $this->entities[] = $sofaSONObject;
     }
 
-
     public function jsonSerialize(): array
     {
         return [
