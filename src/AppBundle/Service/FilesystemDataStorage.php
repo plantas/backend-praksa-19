@@ -51,9 +51,12 @@ class FilesystemDataStorage implements DataStorageInterface
 
     private static function encodeSelector(array $selector): string
     {
+        ksort($selector);
+        return serialize($selector);
+
+        /*
         $data = [];
 
-        ksort($selector);
         foreach ($selector as $key => $value) {
             //entity can be selected by entities which also need to be selected, e.g. event player statistics by event, player and team
             $valueString = is_array($value) ? self::encodeSelector($value['selector']) : $value;
@@ -61,6 +64,6 @@ class FilesystemDataStorage implements DataStorageInterface
         }
 
         return '{' . implode(",", $data) . '}';
-
+        */
     }
 }

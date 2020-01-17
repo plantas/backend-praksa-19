@@ -102,7 +102,7 @@ class Event
     /**
      * @var ArrayCollection|Goal []
      *
-     * @ORM\OneToMany(targetEntity=Goal::class, mappedBy="event")
+     * @ORM\OneToMany(targetEntity=Goal::class, mappedBy="event", cascade={"persist", "remove"})
      */
     private $goals;
 
@@ -386,6 +386,7 @@ class Event
      */
     public function addGoal(Goal $goal)
     {
+        $goal->setEvent($this);
         if (!$this->goals->contains($goal)) {
             $this->goals->add($goal);
         }

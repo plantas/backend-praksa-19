@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Event;
 use AppBundle\Entity\EventStatus;
+use AppBundle\Entity\Goal;
+use AppBundle\Entity\SofaSON\SofaSONObject;
 use AppBundle\Service\DataStorageInterface;
 use AppBundle\Service\DemoParser;
 use AppBundle\Service\Differentiator;
@@ -18,6 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\VarDumper\Cloner\Data;
 
 class DefaultController extends Controller
 {
@@ -95,20 +98,29 @@ JSON;
         MyParser $parser,
         XmlTransformer $transformer,
         Receiver $receiver,
-        Differentiator $differentiator
+        Differentiator $differentiator,
+        DataStorageInterface $storage
     )
     {
         $xml = $receiver->receiveXml();
 
         $json = $transformer->transform($xml);
 
-        $sofaSON = $parser->parse($json);
+        $sofaSON = $parser->parse($json); // SofaSON
 
-        $diff = $differentiator->diff($sofaSON->jsonSerialize());
+        $serialized = $sofaSON->jsonSerialize();
 
+        $diff = $differentiator->diff($serialized);
+
+        dump($diff);
         $persister->persistFromArray($diff);
 
-        die;
+        // store transformer output
+        foreach ($serialized['entities'] as $entity) {
+            $storage->set($sofaSON->getDataSourceId(), $entity['entity'], $entity['selector'], $sofaSON->getFeedType(), $entity['propertyMap']);
+        }
+
+        return new Response('Saved');
 
     }
 
@@ -133,24 +145,52 @@ JSON;
         ]);
 
         $status = new EventStatus();
-        $status->setCode(1);
-        $status->setType('Started');
-        $status->setDescription('Match has started');
+        $status->setCode(1)
+            ->setType('Started')
+            ->setDescription('Match has started');
 
+        $goal = new Goal();
+        $goal->setExternalId(1)
+            ->setExternalType(1)
+            ->setHomeScore(2)
+            ->setAwayScore(0)
+            ->setPlayer('Test Scorer')
+            ->setAssist('Test Asistent')
+            ->setMinute(40)
+        ;
+
+        /*
         $event = new Event();
-        $event->setExternalId(1);
-        $event->setExternalType(1);
-        $event->setSport($sport);
-        $event->setTournament($tournament);
-        $event->setStatus($status);
-        $event->setStartDate(new \DateTime());
-        $event->setHomeTeam($homeTeam);
-        $event->setAwayTeam($awayTeam);
-        $event->setHomeScore(0);
-        $event->setAwayScore(0);
+        $event->setExternalId(1)
+            ->setExternalType(1)
+            ->setSport($sport)
+            ->setTournament($tournament)
+            ->setStatus($status)
+            ->setStartDate(new \DateTime())
+            ->setHomeTeam($homeTeam)
+            ->setAwayTeam($awayTeam)
+            ->setHomeScore(0)
+            ->setAwayScore(0);
+*/
 
-//        $em->persist($event);
-//        $em->flush();
+        /** @var Event $event */
+        $event = $em->getRepository('AppBundle:Event')->findOneBy(['externalId' => 1, 'externalType' => 1]);
+
+        if ($event) {
+            $goals = $event->getGoals();
+            foreach ($goals as $goal) {
+                dump($goal);
+            }
+            die;
+
+            /*
+            $event->addGoal($goal);
+            $em->persist($event);
+            $em->flush();*/
+        } else {
+            die ('Event does not exists');
+        }
+
 
         //$em->getRepository('AppBundle:Event');
 

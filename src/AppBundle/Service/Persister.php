@@ -77,6 +77,7 @@ class Persister
         foreach ($sofaSON['entities'] as $entity) {
             $this->persistEntity($entity);
         }
+        $this->entityManager->flush();
     }
 
     protected function persistEntity($data)
@@ -94,8 +95,8 @@ class Persister
 
         } elseif (SofaSONObject::ACTION_UPDATE === $data['action']) {
 
-           if (!$entity instanceof Entity && isset($data['propertyMap'])) {
-               throw new Exception('Cannot update non existent entity');
+           if (!$entity && isset($data['propertyMap'])) {
+               throw new Exception('Entity cannot be loaded');
            }
            $this->upsertEntity($entity, $this->processArrayValues($data['propertyMap'] ?? []));
 
@@ -111,7 +112,6 @@ class Persister
     protected function deleteEntity($entity)
     {
         $this->entityManager->remove($entity);
-        $this->entityManager->flush();
     }
 
     protected function upsertEntity($entity, array $data)
@@ -122,9 +122,12 @@ class Persister
             $setter = 'set' . ucfirst($key);
             if (method_exists($entity, $setter)) {
                 $entity->$setter($value);
+            } else {
+                throw new \Exception("Trying to use method " . $setter . "() that does not exists in class " . get_class($entity));
             }
         }
-        die;
+
+        $this->entityManager->persist($entity);
     }
 
     protected function processArrayValues($data)

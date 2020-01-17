@@ -81,7 +81,7 @@ class Goal
     /**
      * @var int
      *
-     * @ORM\Column(name="addedMinute", type="integer")
+     * @ORM\Column(name="addedMinute", type="integer", nullable=true)
      */
     private $addedMinute;
 

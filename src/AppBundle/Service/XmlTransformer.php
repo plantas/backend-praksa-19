@@ -14,7 +14,7 @@ class XmlTransformer implements TransformerInterface
         $commentary = $xml->xpath('commentary');
 
         // base attributes
-        $data = $this->getAttributes($commentary[0]);
+        $data = $this->getCommentaryAttributes($commentary[0]);
 
         $messages = $xml->xpath('commentary/message');
         foreach ($messages as $message) {
@@ -24,7 +24,7 @@ class XmlTransformer implements TransformerInterface
         return json_encode($data);
     }
 
-    private function getAttributes(\SimpleXMLElement $element): ?array
+    private function getCommentaryAttributes(\SimpleXMLElement $element): ?array
     {
         // moze biti dio configa
         $lookFor = [
@@ -53,19 +53,15 @@ class XmlTransformer implements TransformerInterface
         $data = [];
 
         $lookFor = [
-            'id' => 'id',
-            'comment' => 'comment',
-            'time' => 'time'
+            'id'        => 'id',
+            'comment'   => 'comment',
+            'time'      => 'time',
+            'scorer'    => 'player',
+            'assist'    => 'assist'
         ];
 
         foreach ($lookFor as $key => $target) {
-            $value = (string) $element[$key];
-
-            if ($value) {
-                $data[$target] = $value;
-            } else {
-                throw new \Exception("Attribute $key cannot be found");
-            }
+            $data[$target] = isset($element[$key]) ? (string) $element[$key] : '';
         }
 
         return $data;
