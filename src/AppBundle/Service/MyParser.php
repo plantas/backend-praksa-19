@@ -35,7 +35,7 @@ class MyParser implements XmlParserInterface
             $sofaSONEntity = SofaSONObject::fromEntitySelectorAndPropertyMap(
                 Goal::class,
                 [
-                    'event'         => $event,
+                    //'event'         => $event,
                     'externalId'    => intval($message['id']),
                     'externalType'  => 1,
                 ],
@@ -46,7 +46,7 @@ class MyParser implements XmlParserInterface
                     'homeScore'     => $homeScore,
                     'awayScore'     => $awayScore,
                     'minute'        => $minute,
-                    'player'        => $message['player'],
+                    'player'        => trim($message['player']),
                     'assist'        => trim($message['assist'])
                 ]
             );
@@ -55,10 +55,13 @@ class MyParser implements XmlParserInterface
             $sofaSON->addEntity($sofaSONEntity);
         }
 
+        $startDate = SofaSONObject::fromEntitySelectorAndPropertyMap(\DateTime::class, [], ['timestamp' => 1726381805]);
+
         // update event score
         $event->setPropertyMap([
             'homeScore' => $homeScore,
-            'awayScore' => $awayScore
+            'awayScore' => $awayScore,
+            'startDate' => $startDate
         ]);
         $sofaSON->addEntity($event);
 

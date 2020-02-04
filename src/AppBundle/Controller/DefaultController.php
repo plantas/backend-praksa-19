@@ -37,8 +37,7 @@ class DefaultController extends Controller
       },
       "propertyMap": {
         "name": "NK Dugo Selo",
-        "gender": "F",
-        "new": "test",
+        "gender": "M",
         "sport": {
           "entity": "AppBundle\\\\Entity\\\\Sport",
           "selector": {
@@ -51,28 +50,15 @@ class DefaultController extends Controller
           "selector": {
             "externalId": 1
           }
-        }
+        },
+        "country": "Croatia"
       },
       "action": "upsert"
     },
     {
       "entity": "AppBundle\\\\Entity\\\\Team",
       "selector": {
-        "externalId": 11111
-      },
-      "action": "delete"
-    },
-    {
-      "entity": "AppBundle\\\\Entity\\\\Team",
-      "selector": {
         "externalId": 89937
-      },
-      "action": "delete"
-    },
-    {
-      "entity": "AppBundle\\\\Entity\\\\Team",
-      "selector": {
-        "externalId": 89
       },
       "action": "delete"
     }
@@ -120,8 +106,25 @@ JSON;
             $storage->set($sofaSON->getDataSourceId(), $entity['entity'], $entity['selector'], $sofaSON->getFeedType(), $entity['propertyMap']);
         }
 
-        return new Response('Saved');
+        $event = $em->getRepository('AppBundle:Event')->findOneBy(['id' => 5]);
 
+        $html = '';
+        $html .= '<h4>' . $event->getHomeTeam()->getName() . ' - ' . $event->getAwayTeam()->getName() . '</h4>';
+        $html .= $event->getHomeScore() . ' : ' . $event->getAwayScore();
+
+        $html .= '<ul>';
+        /** @var Goal $goal */
+        foreach ($event->getGoals() as $goal) {
+            $html .= '<li>' . $goal->getMinute() . '\' - ' . $goal->getHomeScore() . ':' . $goal->getAwayScore() . ' by ' . $goal->getPlayer();
+            if ($goal->getAssist()) {
+                $html .= ' assisted by ' . $goal->getAssist();
+            }
+            $html .= '</li>';
+        }
+
+        $html .= '</ul>';
+
+        return new Response('Saved successfully' . $html);
     }
 
     /**
@@ -217,7 +220,17 @@ JSON;
 
         $data = $differentiator->diff(json_decode($this->input, true));
 
-        dump($data);die;
+        dump('Diff', $data);die;
 
+    }
+
+    /**
+     * @Route("/foo")
+     * @param Request $request
+     */
+    public function foo(Request $request)
+    {
+        $kernel = $this->container->get('kernel');
+        dump($kernel->getProjectDir());die;
     }
 }

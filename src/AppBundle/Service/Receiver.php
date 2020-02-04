@@ -15,12 +15,14 @@ class Receiver
     <message id="1" comment="Goal 1:0" time="20 min" scorer="Mario Mandzukic" />
     <message id="2" comment="Goal 2:0" time="30 min" scorer="Ivan Rakitic" />
     <message id="3" comment="Goal 2:1" time="65 min" scorer="Cristiano Ronaldo" />
+    <message id="4" comment="Goal 2:2" time="67 min" scorer="André Silva" assist="Cristiano Ronaldo" />
+    <message id="5" comment="Goal 2:3" time="69 min" scorer="André Silva" />
 </commentary>
 </xml>
 XML;
-
-
-//    <message id="4" comment="Goal 2:2" time="67 min" scorer="André Silva" assist="Cristiano Ronaldo" />
+        /*
+    <message id="3" comment="Goal 2:1" time="65 min" scorer="Cristiano Ronaldo" />
+    <message id="4" comment="Goal 2:2" time="67 min" scorer="André Silva" assist="Cristiano Ronaldo" />
+         */
     }
-
 }

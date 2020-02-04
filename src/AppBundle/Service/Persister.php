@@ -119,14 +119,8 @@ class Persister
         if (empty($data)) return; // nothing to update
 
         foreach ($data as $key => $value) {
-            $setter = 'set' . ucfirst($key);
-            if (method_exists($entity, $setter)) {
-                $entity->$setter($value);
-            } else {
-                throw new \Exception("Trying to use method " . $setter . "() that does not exists in class " . get_class($entity));
-            }
+            $this->callSetter($entity, $key, $value);
         }
-
         $this->entityManager->persist($entity);
     }
 
@@ -135,22 +129,59 @@ class Persister
         $ret = [];
         foreach ($data as $key => $value) {
             if (is_array($value)) {
-                if (array_key_exists('entity', $value)) {
+
+                // entity must be set if property value is array
+                if (!array_key_exists('entity', $value)) {
+                    throw new \Exception("Invalid entity");
+                }
+
+                if (array_key_exists('selector', $value)) {
+                    $ret[$key] = $this->entityManager->getRepository($value['entity'])->findOneBy(
+                        $this->processArrayValues($value['selector'])
+                    );
+                } else {
+                    // entity without selector could be primitive, plain php object eg. DateTime or Embedabble
                     if (SofaSONObject::PRIMITIVE_DATA_TYPE === $value['entity']) {
+                        // #Primitive
+                        $ret[$key] = $value['value'];
+                    } elseif (isset($value['propertyMap'])) {
+                        // has propertyMap
+                        $ret[$key] = $this->createObject($value['entity'], $value['propertyMap']);
+                    } elseif (isset($value['value'])) {
+                        // has value
                         $ret[$key] = $value['value'];
                     } else {
-                        // Entity lookup by selectors
-                        $ret[$key] = $this->entityManager->getRepository($value['entity'])->findOneBy(
-                            $this->processArrayValues($value['selector'])
-                        );
+                        throw new \Exception('Invalid entity');
                     }
                 }
             } else {
+                // shorthand scalar type
                 $ret[$key] = $value;
             }
         }
 
         return $ret;
     }
+
+    private function callSetter($object, string $key, $value)
+    {
+        $setter = 'set' . ucfirst($key);
+        if (method_exists($object, $setter)) {
+            $object->$setter($value);
+        } else {
+            throw new \Exception("Trying to use method " . $setter . "() that does not exists in class " . get_class($object));
+        }
+    }
+
+    private function createObject(string $class, array $properties)
+    {
+        $obj = new $class;
+        foreach ($properties as $property => $value) {
+            $this->callSetter($obj, $property, $value);
+        }
+
+        return $obj;
+    }
+
 
 }

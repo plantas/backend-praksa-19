@@ -37,3 +37,6 @@ services:
     AppBundle\Service\DataStorageInterface:
         '@AppBundle\Service\FilesystemDataStorage'
 
+    AppBundle\Service\FileSystemDataStorage:
+        arguments: [%kernel.project_dir%/var/storage]
+

@@ -5,9 +5,16 @@ namespace AppBundle\Service;
 
 
 use AppBundle\Service\DataStorageInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class FilesystemDataStorage implements DataStorageInterface
 {
+    private $storageDirectory;
+
+    public function __construct($storageDirectory)
+    {
+        $this->storageDirectory = $storageDirectory;
+    }
 
     /**
      * @inheritDoc
@@ -43,27 +50,20 @@ class FilesystemDataStorage implements DataStorageInterface
 
     private function getFilePath(int $dataSourceId, string $entityClass, array $selector, string $feedType)
     {
-        // TODO fetch path from config
-        $directory = realpath(__DIR__ . '/../../../var/storage');
-
-        return $directory . '/' . md5($dataSourceId . $entityClass . self::encodeSelector($selector) . $feedType);
+        return $this->storageDirectory . '/' . md5($dataSourceId . $entityClass . self::encodeSelector($selector) . $feedType);
     }
 
     private static function encodeSelector(array $selector): string
     {
-        ksort($selector);
-        return serialize($selector);
-
-        /*
         $data = [];
 
+        ksort($selector);
         foreach ($selector as $key => $value) {
             //entity can be selected by entities which also need to be selected, e.g. event player statistics by event, player and team
             $valueString = is_array($value) ? self::encodeSelector($value['selector']) : $value;
-            $data[] = sprintf('%s:%s', $key, $valueString);
+            $data[]      = sprintf('%s:%s', $key, $valueString);
         }
 
         return '{' . implode(",", $data) . '}';
-        */
     }
 }
